@@ -1,8 +1,9 @@
 baseURL = 'http://example.org/'
-languageCode = 'en-us'
-title = 'Pat Cave'
-theme = 'diary'
+contentDir = 'content'
 enableEmoji = true
+languageCode = 'en-us'
+theme = 'diary'
+title = 'Pat Cave'
 
 [params]
 subtitle = '😮‍💨'
