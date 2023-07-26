@@ -22,15 +22,15 @@ TRICK QUESTION! LET'S DO BOTH!
 
 Snowman allows me to retrieve all the environments that I have access to, pick one, and then set them as environment variables in my terminal. This allows me to use them in standard scripts that I keep on my machine. Let's look at some examples.
 
-![Screenshot showing a fuzzy matcher with the input "Worksp". The available results are, "My Workspace" and "Aaron's Workspace".](https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/8fc7e5b9-4c0d-419c-b538-41d8a2b7ee2a)
+![Screenshot showing a fuzzy matcher with the input "Worksp". The available results are, "My Workspace" and "Aaron's Workspace".](https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/44a5fdf8-db35-441d-ba97-1f46e0a9469a)
 
 After configuring Snowman for the first time, you can use `snowman activate` to see a list of Workspaces you have access to. This selector does fuzzy matching so you can get to what you need quickly. Selecting a Workspace will show you the list of environments:
 
-![Screenshot showing a lit of 11 environments](https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/9c87abe4-ef91-4aab-bd5b-3560f1c8568a)
+![Screenshot showing a lit of 11 environments](https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/8e9123c1-cc6a-4e3d-90c5-385f3dafbb05)
 
 As you can see, there's a lot of them. (And maybe I should come up with some slightly more standard naming 😅.) The actual name of the environment is what the selection starts with. The name enclosed in brackets represents the fork it came from. This allows me to keep in sync with any changes to those generic environments, while personalizing them as I want. Next, once I select one, the name of the environment will be populated on my prompt:
 
-![Screenshot showing zsh prompt that includes "⛄ Prod Workiva Testing [prod]"](https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/94f9ea19-79db-45d4-ace6-414173b02c6f)
+![Screenshot showing zsh prompt that includes "⛄ Prod Workiva Testing [prod]"](https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/b119237d-4152-4cb2-bfa4-081fabc13bfc)
 
 That's accomplished by a custom [spaceship prompt plugin](https://github.com/PatOConnor43/snowman/tree/master/zsh) I wrote.
 
