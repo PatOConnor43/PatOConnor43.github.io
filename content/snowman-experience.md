@@ -16,7 +16,7 @@ During my day job, I work with a lot with APIs. Sometimes I'm writing and testin
 
 You're right!
 
-I like Postman, I really do. _But_ I also really like the terminal. Writing up a little bash script so I can continuously iterate on and examine the output of a request is how I like to work. So, we're at a bit of a crossroads. Do I use Postman because my team and I can centralize variables and knowledge, _OR_ do I continue to use curl without taking advatage of consistent environment variables?
+I like Postman, I really do. _But_ I also really like the terminal. Writing up a little bash script so I can continuously iterate on and examine the output of a request is how I like to work. So, we're at a bit of a crossroads. Do I use Postman because my team and I can centralize variables and knowledge, _OR_ do I continue to use curl without taking advantage of consistent environment variables?
 
 TRICK QUESTION! LET'S DO BOTH!
 
