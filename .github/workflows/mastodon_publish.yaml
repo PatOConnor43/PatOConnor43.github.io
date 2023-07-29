@@ -24,9 +24,9 @@ jobs:
           mkdir -p "$RUNNER_TOOL_CACHE/jq"
 
           echo "Installing into tool cache:"
-          echo "Src: $RUNNER_TEMP/${_bin_name}"
+          echo "Src: $_dl_path"
           echo "Dst: $RUNNER_TOOL_CACHE/jq/jq"
-          mv "$RUNNER_TEMP/jq" "$RUNNER_TOOL_CACHE/jq/jq"
+          mv "$_dl_path" "$RUNNER_TOOL_CACHE/jq/jq"
 
           chmod +x "$RUNNER_TOOL_CACHE/jq/jq"
 
