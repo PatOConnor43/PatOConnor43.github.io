@@ -4,6 +4,8 @@ on:
     - cron: "0 9 * * *"
 jobs:
   publish:
+    environment:
+      name: mastodon-poster
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
