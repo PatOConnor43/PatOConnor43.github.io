@@ -1,7 +1,7 @@
 name: Publish Mastodon status if new blog is available
 on:
   schedule:
-    - cron: "0 9 * * *"
+    - cron: "0 16 * * *"
 jobs:
   publish:
     environment:
@@ -17,21 +17,24 @@ jobs:
           _version='1.0.1'
           # Probably this is the right arch right?
           _dl_url="https://github.com/orf/hq/releases/download/v$_version/hq-Linux-x86_64.tar.gz"
-          _dl_path="$RUNNER_TEMP/jq"
-          wget -O- "${_dl_url}" > "${_dl_path}"
+          _dl_path="$RUNNER_TEMP/hq.tar.gz"
+          wget -O- "$_dl_url" > "$_dl_path"
+          tar -xzf "$_dl_path" --directory $RUNNER_TEMP
+          _executable_path="$RUNNER_TEMP/hq"
 
-          echo "Creating tool cache directory $RUNNER_TOOL_CACHE/jq"
-          mkdir -p "$RUNNER_TOOL_CACHE/jq"
+
+          echo "Creating tool cache directory $RUNNER_TOOL_CACHE/hq"
+          mkdir -p "$RUNNER_TOOL_CACHE/hq"
 
           echo "Installing into tool cache:"
-          echo "Src: $_dl_path"
-          echo "Dst: $RUNNER_TOOL_CACHE/jq/jq"
-          mv "$_dl_path" "$RUNNER_TOOL_CACHE/jq/jq"
+          echo "Src: $_executable_path"
+          echo "Dst: $RUNNER_TOOL_CACHE/hq/hq"
+          mv "$_executable_path" "$RUNNER_TOOL_CACHE/hq/hq"
 
-          chmod +x "$RUNNER_TOOL_CACHE/jq/jq"
+          chmod +x "$RUNNER_TOOL_CACHE/hq/hq"
 
-          echo "Adding $RUNNER_TOOL_CACHE/jq to path..."
-          echo "$RUNNER_TOOL_CACHE/jq" >> $GITHUB_PATH
+          echo "Adding $RUNNER_TOOL_CACHE/hq to path..."
+          echo "$RUNNER_TOOL_CACHE/hq" >> $GITHUB_PATH
       - name: 'Run publish script'
         env:
           MASTODON_ACCESS_TOKEN: ${{ secrets.MASTODON_ACCESS_TOKEN }}
