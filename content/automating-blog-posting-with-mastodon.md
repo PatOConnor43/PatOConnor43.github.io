@@ -1,7 +1,6 @@
 ---
 title: "Automating Blog Posting With Mastodon"
-date: 2023-07-29T12:28:01-07:00
-draft: true
+date: 2023-07-29T20:00:00-07:00
 ---
 
 I've recently been being a little more active on Mastodon and I've also taken a new interest in getting this blog off the ground.
