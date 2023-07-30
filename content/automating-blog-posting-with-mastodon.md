@@ -191,6 +191,8 @@ Here's a link to the current version of the workflow[^7]
 ## Wrapping up
 At the time of writing this post I haven't actually run this GitHub Action yet 😅 I set it up to run on a schedule and I thought it'd be fun if I did it right on the first try 😬 Maybe I'll put a small update if it worked out.
 
+*Edit: It didn't work first try, but it did work second try after I fixed the data command flags I was using. Turns out they're different between Mac and Linux.*
+
 ## References
 [^1]: https://docs.joinmastodon.org/methods/statuses/#create
 [^2]: https://docs.joinmastodon.org/client/token/
