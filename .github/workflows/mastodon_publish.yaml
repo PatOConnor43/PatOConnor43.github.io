@@ -2,6 +2,8 @@ name: Publish Mastodon status if new blog is available
 on:
   schedule:
     - cron: "0 16 * * *"
+  workflow_dispatch:
+
 jobs:
   publish:
     environment:
