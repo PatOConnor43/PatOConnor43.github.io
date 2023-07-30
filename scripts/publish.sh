@@ -1,10 +1,12 @@
 #! /bin/bash
 now=`date "+%s"`
 one_day_ago=$((now - 86400))
+# TODO fix incompatibilities between linux vs. mac date command
+# -j -f "%a, %d %b %Y %H:%M:%S %z"
 
 item_json=`curl -s 'https://www.xn--z47haa.ws/index.xml' | hq '{item: item | {title: title, pubDate: pubDate, guid: guid}}'`
 pubDate=`echo $item_json | jq -r '.item.pubDate'`
-pubDate_unix=`date -j -f "%a, %d %b %Y %H:%M:%S %z" "$pubDate" "+%s"`
+pubDate_unix=`date -d "$pubDate" "+%s"`
 diff_unix=$((pubDate_unix - one_day_ago))
 
 if [ $diff_unix -ge 0 ]; then
