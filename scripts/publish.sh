@@ -23,10 +23,10 @@ if [ $diff_unix -ge 0 ]; then
 
     title=`echo $item_json | jq -r '.item.title' | tr '"' "'"`
     link=`echo $item_json | jq -r '.item.guid'`
-    tags=`echo $item_json | jq -r '.item.description' | gsed -nr 's/.*::: (.*) :::.*/\1/p'`
+    tags=`echo $item_json | jq -r '.item.description' | sed -nr 's/.*::: (.*) :::.*/\1/p'`
     tag_string=""
     if [ "$tags" != "" ]; then
-        tag_string=`echo $tags | gsed -r 's/(\w+)/\#\1/g'`
+        tag_string=`echo $tags | sed -r 's/(\w+)/\#\1/g'`
     fi
 
     echo "Posting a toot with the title: $title link: $link tag_string: $tag_string"
