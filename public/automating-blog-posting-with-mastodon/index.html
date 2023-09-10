@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html><head>
+<title>Automating Blog Posting With Mastodon</title>
+
+
+
+
+<meta charset="utf-8">
+<meta name="X-UA-Compatible" content="IE=edge">
+<meta name="google-site-verification" content="">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+<meta content="telephone=no" name="format-detection">
+<meta name="description" content="">
+<meta name="renderer" content="webkit">
+<meta name="theme-color" content="#ffffff">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+      <script src="/js/toc.js"></script>
+    
+    <link type="text/css" rel="stylesheet" href="/vendor/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="/scss/dark-mode.min.cb53f1bee2b8900cb4f082afbf00175d6618f281cf9a2fe8619e3b52d20b5721.css" integrity="sha256-y1PxvuK4kAy08IKvvwAXXWYY8oHPmi/oYZ47UtILVyE=" media="screen">
+
+
+<link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Material+Icons">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+    	<div id="app"><div class="single-column-drawer-container" id="drawer"
+     v-bind:class="{ 'single-column-drawer-container-active': isDrawerOpen }">
+    <div class="drawer-content">
+        <div class="drawer-menu">
+            
+            
+            
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- CATALOG -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#so-whats-the-plan" class="nav-so-whats-the-plan">
+									So what’s the plan?
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#lets-look-at-the-docs" class="nav-lets-look-at-the-docs">
+									Let’s look at the docs
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#time-for-some-action-" class="nav-time-for-some-action-">
+									Time for some Action 😎
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#wrapping-up" class="nav-wrapping-up">
+									Wrapping up
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#references" class="nav-references">
+									References
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+            
+        </div>
+    </div>
+</div>
+<transition name="fade">
+    <div id="drawer-mask" v-bind:class="{ 'single-column-drawer-mask': mounted }" v-if="isDrawerOpen" v-on:click="toggleDrawer"></div>
+</transition>
+<nav id="navBar" class="navbar sticky-top navbar-light single-column-nav-container">
+    <div id="navBackground" class="nav-background"></div>
+    <div class="container container-narrow nav-content">
+        <button id="nav_dropdown_btn" class="nav-dropdown-toggle" type="button" v-on:click="toggleDrawer">
+            <i class="material-icons">
+                menu
+            </i>
+        </button>
+        <a id="navTitle" class="navbar-brand" href="https://xn--z47haa.ws/">
+            Pat Cave
+        </a>
+        
+        <button type="button" class="nav-darkmode-toggle" id="darkModeToggleButton2">
+            <i class="material-icons" id="darkModeToggleIcon2">
+                dark_mode
+            </i>
+        </button>
+        
+    </div>
+</nav>
+<div class="single-column-header-container" id="pageHead"
+     v-bind:style="{ transform: 'translateZ(0px) translateY('+.3*scrollY+'px)', opacity: 1-navOpacity }">
+    <a href="https://xn--z47haa.ws/">
+        <div class="single-column-header-title">Pat Cave</div>
+        
+        <div class="single-column-header-subtitle">😮‍💨</div>
+        
+
+    </a>
+</div>
+
+            <div id="content">
+                <div id="streamContainer" class="stream-container">
+
+    <div class="post-list-container post-list-container-shadow">
+        <div class="post">
+            
+            
+            
+
+            <div class="post-head-wrapper-text-only"
+                
+            >
+                <div class="post-title">
+                    Automating Blog Posting With Mastodon
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2023-07-29 20:00
+                        </time>
+                        
+
+                        
+
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <p>I&rsquo;ve recently been being a little more active on Mastodon and I&rsquo;ve also taken a new interest in getting this blog off the ground.
+(Last weekend I finally got the DNS issue fixed up so you can use my actual domain https://🆒🆒🆒.ws).</p>
+<p>Anyway, this Saturday morning I thought, &ldquo;Why don&rsquo;t I automate it?&rdquo; I already have the deploy automated with Github Actions. Why not save my self 3 seconds posting it to Mastodon by spending a couple hours learning how the Mastodon API works? 😅</p>
+<h2 id="so-whats-the-plan">So what&rsquo;s the plan?</h2>
+<ul>
+<li>Look at the Mastodon docs to see how the API works</li>
+<li>Write a script that posts a new status for the recently published blog post</li>
+<li>Run that in a scheduled Github Action</li>
+</ul>
+<p>Easy right?</p>
+<h2 id="lets-look-at-the-docs">Let&rsquo;s look at the docs</h2>
+<p>Here&rsquo;s the documentation for creating a new status<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup>. That was easy, but how about authentication? That always seems to take me the longest. This is the page I initially found<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup> (&lt;&ndash; Not as helpful). This talks about creating an application, authentication code flow(?), grant types(?).</p>
+<p>Let&rsquo;s try to break it down and I&rsquo;ll try to explain why this wasn&rsquo;t as helpful as I wanted it to be.</p>
+<p>Let&rsquo;s start by making our new application. On my instance this url is:
+<a href="https://hachyderm.io/settings/applications">https://hachyderm.io/settings/applications</a></p>
+<p>You should be able to go to the same path on your instance. After clicking &ldquo;New Application&rdquo;, you should be greeted by a page like this:</p>
+<p><img src="https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/118fe6ad-e2d6-40e9-8eaa-bf6e38c5b98d" alt="A screenshot of the New Application page. There are fields for name, website, redirect URI, and scopes"></p>
+<p>In my case, I called this Application &ldquo;Mastodon Poster&rdquo; without any change to the website or redirect URI. Since I only want this Application to post statuses I also only gave it the <code>write:statuses</code> scope.</p>
+<p>Now that we have an Application, let&rsquo;s try to figure out what&rsquo;s going on with authentication. Based off the token spec<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup>, it looks like there are 3 ways to authenticate with the Mastodon API:</p>
+<ul>
+<li>Authorization Code flow</li>
+<li>Password grant flow</li>
+<li>Client credentials grant</li>
+</ul>
+<p>Based on previous API experience, I don&rsquo;t think I really want Authorization Code Flow. That&rsquo;s typically used as a way to allow a user to log in using a browser and then take a code and act on behalf of the user. We want this to be totally headless.</p>
+<p>Password grant flow sounds gross. I really don&rsquo;t want to use my actual password to authenticate.</p>
+<p>Client credentials <em>might</em> work. What happens if we try that? Well we&rsquo;d make a request like this<sup id="fnref1:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>curl -X POST <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	-F <span style="color:#e6db74">&#39;client_id=your_client_id_here&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	-F <span style="color:#e6db74">&#39;client_secret=your_client_secret_here&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	-F <span style="color:#e6db74">&#39;redirect_uri=urn:ietf:wg:oauth:2.0:oob&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	-F <span style="color:#e6db74">&#39;grant_type=client_credentials&#39;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>	https://mastodon.example/oauth/token
+</span></span></code></pre></div><p>Okay that looks like it worked. You should have a response that looks like:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#f92672">{</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;access_token&#34;</span>: <span style="color:#e6db74">&#34;ZA-Yj3aBD8U8Cm7lKUp-lm9O9BmDgdhHzDeqsY8tlL0&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;token_type&#34;</span>: <span style="color:#e6db74">&#34;Bearer&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;scope&#34;</span>: <span style="color:#e6db74">&#34;read&#34;</span>,
+</span></span><span style="display:flex;"><span>  <span style="color:#e6db74">&#34;created_at&#34;</span>: <span style="color:#ae81ff">1573979017</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">}</span>
+</span></span></code></pre></div><p>Let&rsquo;s try to use that access_token to make a status:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>    curl -X POST -H <span style="color:#e6db74">&#34;Authorization: Bearer </span>$access_token<span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span>$MASTODON_DOMAIN<span style="color:#e6db74">/api/v1/statuses&#34;</span> -d <span style="color:#e6db74">$&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    {
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">        &#34;status&#34;: &#34;test&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">    }
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">&#39;</span>
+</span></span></code></pre></div><blockquote>
+<p>{&ldquo;error&rdquo;:&ldquo;This method requires an authenticated user&rdquo;}</p>
+</blockquote>
+<p>😮‍💨</p>
+<p>What?</p>
+<p>Okay, so turns out we can&rsquo;t use client_credentials either because that grant_type isn&rsquo;t meant to act on behalf of a user. It&rsquo;s more for making general queries against your instance. So I spent an hour or so looking for other options, because I <em>really</em> didn&rsquo;t want to use my password. Then I finally found this GitHub issue<sup id="fnref:4"><a href="#fn:4" class="footnote-ref" role="doc-noteref">4</a></sup>.</p>
+<blockquote>
+<p>If you want to, you can also log in manually and create a new application via Settings &gt; Development, then copy-paste the generated access token into your config file or environment variables or whatever.</p>
+</blockquote>
+<p>Oh? We haven&rsquo;t talked about this yet, but when you made an application there should be 3 IDs there. A client ID, a client secret, and an Access Token.
+<img src="https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/a54417e8-3abc-48dc-8fec-f569889cfc1a" alt="A screenshot with an arrow pointing at the value for the &ldquo;Your access token&rdquo; field"></p>
+<p>We haven&rsquo;t tried anything with the Access Token. So it sounds like this person says we can do something like this?</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>    curl -X POST -H <span style="color:#e6db74">&#34;Authorization: Bearer </span>$access_token<span style="color:#e6db74">&#34;</span> <span style="color:#e6db74">&#34;</span>$MASTODON_DOMAIN<span style="color:#e6db74">/api/v1/statuses&#34;</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        -F <span style="color:#e6db74">&#34;status=Test
+</span></span></span></code></pre></div><p>Oh hey! That worked!</p>
+<p>Alright let&rsquo;s wrap this up in a script we can call in GitHub Actions. You can find the most recent version of that in my blog repo here<sup id="fnref:5"><a href="#fn:5" class="footnote-ref" role="doc-noteref">5</a></sup>.</p>
+<h2 id="time-for-some-action-">Time for some Action 😎</h2>
+<p>A key consideration for this whole thing was that I wanted it to be mostly stateless. I don&rsquo;t want to have to worry about double posting a blog post if I fix a small typo on master. So the current plan is:</p>
+<ul>
+<li>Allow current github-pages deployment to happen as normal</li>
+<li>Create a separate scheduled workflow that runs once per day</li>
+<li>In this workflow make a request to my rss feed to see if something was published in the last day</li>
+<li>If it was, post a status on Mastodon</li>
+</ul>
+<p>I think there&rsquo;s plenty of other ways to do it but that&rsquo;s what I&rsquo;m going with for now.</p>
+<p>Let&rsquo;s get started on that workflow. Here&rsquo;s the cron syntax for running this at 9 AM every day</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">name</span>: <span style="color:#ae81ff">Publish Mastodon status if new blog is available</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">on</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">schedule</span>:
+</span></span><span style="display:flex;"><span>    - <span style="color:#f92672">cron</span>: <span style="color:#e6db74">&#34;0 9 * * *&#34;</span>
+</span></span></code></pre></div><blockquote>
+<p>I didn&rsquo;t realize this was GMT, but we can change that later.</p>
+</blockquote>
+<p>Based off the script we need a couple dependencies:</p>
+<ul>
+<li><code>jq</code> to parse json</li>
+<li><code>hq</code> to parse html (the rss feed is xml)</li>
+<li>checkout the branch so we can run the script</li>
+</ul>
+<p>Let&rsquo;s drop the checkout action in here because that&rsquo;s easy:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">publish</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mastodon-poster</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">runs-on</span>: <span style="color:#ae81ff">ubuntu-latest</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">steps</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#ae81ff">Checkout</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">actions/checkout@v3</span>
+</span></span></code></pre></div><p>Next, let&rsquo;s install <code>jq</code>. It turns out there&rsquo;s an existing action for this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;Install jq&#39;</span>
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">uses</span>: <span style="color:#ae81ff">dcarbone/install-jq-action@v1.0.1</span>
+</span></span></code></pre></div><p>This has some additional options if you want to specify a specific version. I don&rsquo;t care about that in this case though.</p>
+<p>Lastly, we need to get <code>hq</code> installed. You can find that project here<sup id="fnref:6"><a href="#fn:6" class="footnote-ref" role="doc-noteref">6</a></sup>. I didn&rsquo;t <em>see</em> a predefined action for this so let&rsquo;s just try getting this installed ourselves. Here&rsquo;s what I came up with:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;Install hq&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: |<span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          _version=&#39;1.0.1&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          # Probably this is the right arch right?
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          _dl_url=&#34;https://github.com/orf/hq/releases/download/v$_version/hq-Linux-x86_64.tar.gz&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          _dl_path=&#34;$RUNNER_TEMP/hq.tar.gz&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          wget -O- &#34;$_dl_url&#34; &gt; &#34;$_dl_path&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          tar -xzf &#34;$_dl_path&#34; --directory $RUNNER_TEMP
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          _executable_path=&#34;$RUNNER_TEMP/hq&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Creating tool cache directory $RUNNER_TOOL_CACHE/hq&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          mkdir -p &#34;$RUNNER_TOOL_CACHE/hq&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Installing into tool cache:&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Src: $_executable_path&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Dst: $RUNNER_TOOL_CACHE/hq/hq&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          mv &#34;$_executable_path&#34; &#34;$RUNNER_TOOL_CACHE/hq/hq&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          chmod +x &#34;$RUNNER_TOOL_CACHE/hq/hq&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;Adding $RUNNER_TOOL_CACHE/hq to path...&#34;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">          echo &#34;$RUNNER_TOOL_CACHE/hq&#34; &gt;&gt; $GITHUB_PATH</span>          
+</span></span></code></pre></div><p>Nice, hopefully that should pull the right architecture for the runner and then add it on the path. Another option would probably be to use an existing Rust image and then use <code>cargo install html-query</code>.</p>
+<p>Lastly, let&rsquo;s run our publish script:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span>      - <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#39;Run publish script&#39;</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">env</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">MASTODON_ACCESS_TOKEN</span>: <span style="color:#ae81ff">${{ secrets.MASTODON_ACCESS_TOKEN }}</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">MASTODON_DOMAIN</span>: <span style="color:#ae81ff">https://hachyderm.io</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">run</span>: <span style="color:#ae81ff">bash ./scripts/publish.sh</span>
+</span></span><span style="display:flex;"><span>          <span style="color:#ae81ff">./scripts/publish.sh</span>
+</span></span></code></pre></div><p>Notice <code>MASTODON_ACCESS_TOKEN</code> variable coming from <code>secrets.MASTODON_ACCESS_TOKEN</code>. You&rsquo;ll need to set this up as a secret in GitHub. You can do that by going to Settings &gt; Environment &gt; New Environment and then finding this tab and adding the new secret:
+<img src="https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/8048a82c-ec5e-44b2-b8cd-88b9eefbfd2a" alt="A Screenshot showing a panel with the MASTODON_ACCESS_TOKEN added as a secret"></p>
+<p>Remember to assign this environment when you&rsquo;re defining your job:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">jobs</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">publish</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">environment</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">mastodon-poster</span>
+</span></span></code></pre></div><p>Here&rsquo;s a link to the current version of the workflow<sup id="fnref:7"><a href="#fn:7" class="footnote-ref" role="doc-noteref">7</a></sup></p>
+<h2 id="wrapping-up">Wrapping up</h2>
+<p>At the time of writing this post I haven&rsquo;t actually run this GitHub Action yet 😅 I set it up to run on a schedule and I thought it&rsquo;d be fun if I did it right on the first try 😬 Maybe I&rsquo;ll put a small update if it worked out.</p>
+<p><em>Edit: It didn&rsquo;t work first try, but it did work second try after I fixed the date command flags I was using. Turns out they&rsquo;re different between Mac and Linux.</em></p>
+<h2 id="references">References</h2>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://docs.joinmastodon.org/methods/statuses/#create">https://docs.joinmastodon.org/methods/statuses/#create</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://docs.joinmastodon.org/client/token/">https://docs.joinmastodon.org/client/token/</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a>&#160;<a href="#fnref1:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://docs.joinmastodon.org/spec/oauth/#token">https://docs.joinmastodon.org/spec/oauth/#token</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:4">
+<p><a href="https://github.com/mastodon/documentation/issues/1014">https://github.com/mastodon/documentation/issues/1014</a>&#160;<a href="#fnref:4" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:5">
+<p><a href="https://github.com/PatOConnor43/PatOConnor43.github.io/blob/master/scripts/publish.sh">https://github.com/PatOConnor43/PatOConnor43.github.io/blob/master/scripts/publish.sh</a>&#160;<a href="#fnref:5" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:6">
+<p><a href="https://github.com/orf/hq">https://github.com/orf/hq</a>&#160;<a href="#fnref:6" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:7">
+<p><a href="https://github.com/PatOConnor43/PatOConnor43.github.io/blob/master/.github/workflows/mastodon_publish.yaml">https://github.com/PatOConnor43/PatOConnor43.github.io/blob/master/.github/workflows/mastodon_publish.yaml</a>&#160;<a href="#fnref:7" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">Last modified on 2023-07-29</p>
+                    
+                </div>
+            </div>
+            
+            
+            <nav class="post-pagination">
+
+                
+                <a class="newer-posts" href="/using-the-mastodon-streaming-api/">
+			Next<br>Using the Mastodon Streaming API
+                </a>
+                
+                
+                
+                <a class="older-posts" href="/snowman-experience/">
+			Previous<br>A helpful little Snowman
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+                    </div>
+            </div><div id="sideContainer" class="side-container">
+    
+    <a class="a-block nav-head false" href="https://xn--z47haa.ws/">
+    
+        <div class="nav-title">
+            Pat Cave
+        </div>
+        
+        <div class="nav-subtitle">
+            😮‍💨
+        </div>
+        
+    </a>
+
+    <div class="nav-link-list">
+        
+        
+    </div>
+
+    
+
+    <div class="nav-footer">
+        <a rel="me" href="https://hachyderm.io/@patoconnor43">Find me on Mastodon</a>
+<br>
+
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://risehere.net/">Rise</a>
+<br>
+Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	2023 Pat Cave
+	
+
+    </div>
+    
+</div><div id="extraContainer" class="extra-container">
+    <div class="toc-wrapper">
+        
+
+        
+        <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- CATALOG -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#so-whats-the-plan" class="nav-so-whats-the-plan">
+									So what’s the plan?
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#lets-look-at-the-docs" class="nav-lets-look-at-the-docs">
+									Let’s look at the docs
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#time-for-some-action-" class="nav-time-for-some-action-">
+									Time for some Action 😎
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#wrapping-up" class="nav-wrapping-up">
+									Wrapping up
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#references" class="nav-references">
+									References
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+        
+    </div>
+    <div class="pagination">
+        <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top"
+            :class="{ invisible: scrollY == 0 }">
+            <i class="material-icons pagination-action-icon">
+                keyboard_arrow_up
+            </i>
+        </a>
+        
+        <a type="button" class="pagination-action" id="darkModeToggleButton">
+            <span class="material-icons pagination-action-icon" id="darkModeToggleIcon">
+                dark_mode
+            </span>
+        </a>
+        
+        
+    </div>
+</div><div id="single-column-footer"><a rel="me" href="https://hachyderm.io/@patoconnor43">Find me on Mastodon</a>
+<br>
+
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://risehere.net/">Rise</a>
+<br>
+Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	2023 Pat Cave
+	
+</div>
+            </div>
+    
+    <script src="/js/journal.js"></script></body>
+</html>

@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html><head>
+<title>A helpful little Snowman</title>
+
+
+
+
+<meta charset="utf-8">
+<meta name="X-UA-Compatible" content="IE=edge">
+<meta name="google-site-verification" content="">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+<meta content="telephone=no" name="format-detection">
+<meta name="description" content="">
+<meta name="renderer" content="webkit">
+<meta name="theme-color" content="#ffffff">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+      <script src="/js/toc.js"></script>
+    
+    <link type="text/css" rel="stylesheet" href="/vendor/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="/scss/dark-mode.min.cb53f1bee2b8900cb4f082afbf00175d6618f281cf9a2fe8619e3b52d20b5721.css" integrity="sha256-y1PxvuK4kAy08IKvvwAXXWYY8oHPmi/oYZ47UtILVyE=" media="screen">
+
+
+<link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Material+Icons">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+    	<div id="app"><div class="single-column-drawer-container" id="drawer"
+     v-bind:class="{ 'single-column-drawer-container-active': isDrawerOpen }">
+    <div class="drawer-content">
+        <div class="drawer-menu">
+            
+            
+            
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- CATALOG -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#so-whats-snowman" class="nav-so-whats-snowman">
+									So What’s Snowman?
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#wrapping-up" class="nav-wrapping-up">
+									Wrapping up
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+            
+        </div>
+    </div>
+</div>
+<transition name="fade">
+    <div id="drawer-mask" v-bind:class="{ 'single-column-drawer-mask': mounted }" v-if="isDrawerOpen" v-on:click="toggleDrawer"></div>
+</transition>
+<nav id="navBar" class="navbar sticky-top navbar-light single-column-nav-container">
+    <div id="navBackground" class="nav-background"></div>
+    <div class="container container-narrow nav-content">
+        <button id="nav_dropdown_btn" class="nav-dropdown-toggle" type="button" v-on:click="toggleDrawer">
+            <i class="material-icons">
+                menu
+            </i>
+        </button>
+        <a id="navTitle" class="navbar-brand" href="https://xn--z47haa.ws/">
+            Pat Cave
+        </a>
+        
+        <button type="button" class="nav-darkmode-toggle" id="darkModeToggleButton2">
+            <i class="material-icons" id="darkModeToggleIcon2">
+                dark_mode
+            </i>
+        </button>
+        
+    </div>
+</nav>
+<div class="single-column-header-container" id="pageHead"
+     v-bind:style="{ transform: 'translateZ(0px) translateY('+.3*scrollY+'px)', opacity: 1-navOpacity }">
+    <a href="https://xn--z47haa.ws/">
+        <div class="single-column-header-title">Pat Cave</div>
+        
+        <div class="single-column-header-subtitle">😮‍💨</div>
+        
+
+    </a>
+</div>
+
+            <div id="content">
+                <div id="streamContainer" class="stream-container">
+
+    <div class="post-list-container post-list-container-shadow">
+        <div class="post">
+            
+            
+            
+
+            <div class="post-head-wrapper-text-only"
+                
+            >
+                <div class="post-title">
+                    A helpful little Snowman
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2023-06-23 22:57
+                        </time>
+                        
+
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/cli">cli</a>
+                                &nbsp;
+                            
+                                <a href="/tags/rust">rust</a>
+                                &nbsp;
+                            
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <p>Snowman is a CLI application that I&rsquo;ve been working on to make my life a little easier.</p>
+<p><a href="https://github.com/PatOConnor43/snowman">https://github.com/PatOConnor43/snowman</a></p>
+<h3 id="so-whats-snowman">So What&rsquo;s Snowman?</h3>
+<p>During my day job, I work with a lot with APIs. Sometimes I&rsquo;m writing and testing them, sometimes I&rsquo;m using them to give feedback to other developers. The problem I had though was managing all those variables! I have at least one set of credentials for each environment I work in and I might even have multiple sets with different scopes in order to test different things. You might say to yourself:</p>
+<blockquote>
+<p>This is a solved problem. Can&rsquo;t you just use something like environments in Postman?</p>
+</blockquote>
+<p>You&rsquo;re right!</p>
+<p>I like Postman, I really do. <em>But</em> I also really like the terminal. Writing up a little bash script so I can continuously iterate on and examine the output of a request is how I like to work. So, we&rsquo;re at a bit of a crossroads. Do I use Postman because my team and I can centralize variables and knowledge, <em>OR</em> do I continue to use curl without taking advantage of consistent environment variables?</p>
+<p>TRICK QUESTION! LET&rsquo;S DO BOTH!</p>
+<p>Snowman allows me to retrieve all the environments that I have access to, pick one, and then set them as environment variables in my terminal. This allows me to use them in standard scripts that I keep on my machine. Let&rsquo;s look at some examples.</p>
+<p><img src="https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/44a5fdf8-db35-441d-ba97-1f46e0a9469a" alt="Screenshot showing a fuzzy matcher with the input &ldquo;Worksp&rdquo;. The available results are, &ldquo;My Workspace&rdquo; and &ldquo;Aaron&rsquo;s Workspace&rdquo;."></p>
+<p>After configuring Snowman for the first time, you can use <code>snowman activate</code> to see a list of Workspaces you have access to. This selector does fuzzy matching so you can get to what you need quickly. Selecting a Workspace will show you the list of environments:</p>
+<p><img src="https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/8e9123c1-cc6a-4e3d-90c5-385f3dafbb05" alt="Screenshot showing a lit of 11 environments"></p>
+<p>As you can see, there&rsquo;s a lot of them. (And maybe I should come up with some slightly more standard naming 😅.) The actual name of the environment is what the selection starts with. The name enclosed in brackets represents the fork it came from. This allows me to keep in sync with any changes to those generic environments, while personalizing them as I want. Next, once I select one, the name of the environment will be populated on my prompt:</p>
+<p><img src="https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/b119237d-4152-4cb2-bfa4-081fabc13bfc" alt="Screenshot showing zsh prompt that includes &ldquo;⛄ Prod Workiva Testing [prod]&rdquo;"></p>
+<p>That&rsquo;s accomplished by a custom <a href="https://github.com/PatOConnor43/snowman/tree/master/zsh">spaceship prompt plugin</a> I wrote.</p>
+<p>Now that I have these standard environment variables set I can use them in scripts to automate fetching a JWT, making requests, waiting for an async job to finish, etc. Then when I&rsquo;m finished with this environment I can close the shell with Ctrl-D and be back in the parent shell.</p>
+<h3 id="wrapping-up">Wrapping up</h3>
+<p>At this time Snowman is still alpha and I reserve the right to make breaking changes. If you think you can use this too, maybe we can talk about what changes would be necessary for an actual stable release. Thanks for reading!</p>
+
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">Last modified on 2023-06-23</p>
+                    
+                </div>
+            </div>
+            
+            
+            <nav class="post-pagination">
+
+                
+                <a class="newer-posts" href="/automating-blog-posting-with-mastodon/">
+			Next<br>Automating Blog Posting With Mastodon
+                </a>
+                
+                
+                
+                <a class="older-posts">
+			Previous<br>No older posts.
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+                    </div>
+            </div><div id="sideContainer" class="side-container">
+    
+    <a class="a-block nav-head false" href="https://xn--z47haa.ws/">
+    
+        <div class="nav-title">
+            Pat Cave
+        </div>
+        
+        <div class="nav-subtitle">
+            😮‍💨
+        </div>
+        
+    </a>
+
+    <div class="nav-link-list">
+        
+        
+    </div>
+
+    
+
+    <div class="nav-footer">
+        <a rel="me" href="https://hachyderm.io/@patoconnor43">Find me on Mastodon</a>
+<br>
+
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://risehere.net/">Rise</a>
+<br>
+Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	2023 Pat Cave
+	
+
+    </div>
+    
+</div><div id="extraContainer" class="extra-container">
+    <div class="toc-wrapper">
+        
+
+        
+        <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- CATALOG -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#so-whats-snowman" class="nav-so-whats-snowman">
+									So What’s Snowman?
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#wrapping-up" class="nav-wrapping-up">
+									Wrapping up
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+        
+    </div>
+    <div class="pagination">
+        <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top"
+            :class="{ invisible: scrollY == 0 }">
+            <i class="material-icons pagination-action-icon">
+                keyboard_arrow_up
+            </i>
+        </a>
+        
+        <a type="button" class="pagination-action" id="darkModeToggleButton">
+            <span class="material-icons pagination-action-icon" id="darkModeToggleIcon">
+                dark_mode
+            </span>
+        </a>
+        
+        
+    </div>
+</div><div id="single-column-footer"><a rel="me" href="https://hachyderm.io/@patoconnor43">Find me on Mastodon</a>
+<br>
+
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://risehere.net/">Rise</a>
+<br>
+Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	2023 Pat Cave
+	
+</div>
+            </div>
+    
+    <script src="/js/journal.js"></script></body>
+</html>

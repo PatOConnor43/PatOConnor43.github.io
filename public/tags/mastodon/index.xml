@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>mastodon on Pat Cave</title>
+    <link>https://xn--z47haa.ws/tags/mastodon/</link>
+    <description>Recent content in mastodon on Pat Cave</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 09 Sep 2023 15:30:00 -0700</lastBuildDate><atom:link href="https://xn--z47haa.ws/tags/mastodon/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Using the Mastodon Streaming API</title>
+      <link>https://xn--z47haa.ws/using-the-mastodon-streaming-api/</link>
+      <pubDate>Sat, 09 Sep 2023 15:30:00 -0700</pubDate>
+      
+      <guid>https://xn--z47haa.ws/using-the-mastodon-streaming-api/</guid>
+      <description>An example project using</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Tags on Pat Cave</title>
+    <link>https://xn--z47haa.ws/tags/</link>
+    <description>Recent content in Tags on Pat Cave</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 09 Sep 2023 15:30:00 -0700</lastBuildDate><atom:link href="https://xn--z47haa.ws/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>API</title>
+      <link>https://xn--z47haa.ws/tags/api/</link>
+      <pubDate>Sat, 09 Sep 2023 15:30:00 -0700</pubDate>
+      
+      <guid>https://xn--z47haa.ws/tags/api/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>fediverse</title>
+      <link>https://xn--z47haa.ws/tags/fediverse/</link>
+      <pubDate>Sat, 09 Sep 2023 15:30:00 -0700</pubDate>
+      
+      <guid>https://xn--z47haa.ws/tags/fediverse/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>mastodon</title>
+      <link>https://xn--z47haa.ws/tags/mastodon/</link>
+      <pubDate>Sat, 09 Sep 2023 15:30:00 -0700</pubDate>
+      
+      <guid>https://xn--z47haa.ws/tags/mastodon/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>rust</title>
+      <link>https://xn--z47haa.ws/tags/rust/</link>
+      <pubDate>Sat, 09 Sep 2023 15:30:00 -0700</pubDate>
+      
+      <guid>https://xn--z47haa.ws/tags/rust/</guid>
+      <description></description>
+    </item>
+    
+    <item>
+      <title>cli</title>
+      <link>https://xn--z47haa.ws/tags/cli/</link>
+      <pubDate>Fri, 23 Jun 2023 22:57:57 -0700</pubDate>
+      
+      <guid>https://xn--z47haa.ws/tags/cli/</guid>
+      <description></description>
+    </item>
+    
+  </channel>
+</rss>

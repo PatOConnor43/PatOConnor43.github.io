@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html><head>
+<title>Using the Mastodon Streaming API</title>
+
+
+
+
+<meta charset="utf-8">
+<meta name="X-UA-Compatible" content="IE=edge">
+<meta name="google-site-verification" content="">
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport">
+<meta content="telephone=no" name="format-detection">
+<meta name="description" content="">
+<meta name="renderer" content="webkit">
+<meta name="theme-color" content="#ffffff">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+      <script src="/js/toc.js"></script>
+    
+    <link type="text/css" rel="stylesheet" href="/vendor/css/bootstrap.min.css">
+
+<link rel="stylesheet" href="/scss/dark-mode.min.cb53f1bee2b8900cb4f082afbf00175d6618f281cf9a2fe8619e3b52d20b5721.css" integrity="sha256-y1PxvuK4kAy08IKvvwAXXWYY8oHPmi/oYZ47UtILVyE=" media="screen">
+
+
+<link rel="stylesheet"
+          href="https://fonts.googleapis.com/css?family=Material+Icons">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body>
+    	<div id="app"><div class="single-column-drawer-container" id="drawer"
+     v-bind:class="{ 'single-column-drawer-container-active': isDrawerOpen }">
+    <div class="drawer-content">
+        <div class="drawer-menu">
+            
+            
+            
+            
+            <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- CATALOG -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#lets-start-with-some-research" class="nav-lets-start-with-some-research">
+									Let’s start with some research
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#lets-get-an-access-token" class="nav-lets-get-an-access-token">
+									Let’s get an Access Token
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#putting-it-all-together" class="nav-putting-it-all-together">
+									Putting it all together
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#what-next" class="nav-what-next">
+									What next?
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+            
+        </div>
+    </div>
+</div>
+<transition name="fade">
+    <div id="drawer-mask" v-bind:class="{ 'single-column-drawer-mask': mounted }" v-if="isDrawerOpen" v-on:click="toggleDrawer"></div>
+</transition>
+<nav id="navBar" class="navbar sticky-top navbar-light single-column-nav-container">
+    <div id="navBackground" class="nav-background"></div>
+    <div class="container container-narrow nav-content">
+        <button id="nav_dropdown_btn" class="nav-dropdown-toggle" type="button" v-on:click="toggleDrawer">
+            <i class="material-icons">
+                menu
+            </i>
+        </button>
+        <a id="navTitle" class="navbar-brand" href="https://xn--z47haa.ws/">
+            Pat Cave
+        </a>
+        
+        <button type="button" class="nav-darkmode-toggle" id="darkModeToggleButton2">
+            <i class="material-icons" id="darkModeToggleIcon2">
+                dark_mode
+            </i>
+        </button>
+        
+    </div>
+</nav>
+<div class="single-column-header-container" id="pageHead"
+     v-bind:style="{ transform: 'translateZ(0px) translateY('+.3*scrollY+'px)', opacity: 1-navOpacity }">
+    <a href="https://xn--z47haa.ws/">
+        <div class="single-column-header-title">Pat Cave</div>
+        
+        <div class="single-column-header-subtitle">😮‍💨</div>
+        
+
+    </a>
+</div>
+
+            <div id="content">
+                <div id="streamContainer" class="stream-container">
+
+    <div class="post-list-container post-list-container-shadow">
+        <div class="post">
+            
+            
+            
+
+            <div class="post-head-wrapper-text-only"
+                
+            >
+                <div class="post-title">
+                    Using the Mastodon Streaming API
+                    
+                    <div class="post-meta">
+                        
+                        <time itemprop="datePublished">
+                            2023-09-09 15:30
+                        </time>
+                        
+
+                        
+
+                        
+                            <i class="material-icons" style="">label</i>
+                            
+                                <a href="/tags/rust">rust</a>
+                                &nbsp;
+                            
+                                <a href="/tags/api">API</a>
+                                &nbsp;
+                            
+                                <a href="/tags/mastodon">mastodon</a>
+                                &nbsp;
+                            
+                                <a href="/tags/fediverse">fediverse</a>
+                                &nbsp;
+                            
+                        
+                        
+                    </div>
+                </div>
+            </div>
+            
+            <div class="post-body-wrapper">
+                
+                <div class="post-body" v-pre>
+                
+                    <p>I&rsquo;ve been thinking about trying to write a Mastodon bot that can do something &ldquo;useful&rdquo;. Unfortunately, I don&rsquo;t know what that idea is right now 😅 but I do think it could involve direct messaging the bot. But that raises the question, &ldquo;How would the bot know that it has an unread message&rdquo;? Well, it could continuously poll the instance to get unread messages. This <em>feels</em> pretty wasteful, especially since our bot probably won&rsquo;t have very much traffic. It would be really nice if we could just get an event and then start doing some work. <strong>This is where the streaming API comes in.</strong></p>
+<blockquote>
+<p>TL;DR you can find the code here <a href="https://github.com/PatOConnor43/mastodon-websocket-rust-example/tree/master">https://github.com/PatOConnor43/mastodon-websocket-rust-example/tree/master</a></p>
+</blockquote>
+<h3 id="lets-start-with-some-research">Let&rsquo;s start with some research</h3>
+<p>Unfortunately, the streaming API isn&rsquo;t enabled on every instance. If you want to follow-along with your instance, you should start by checking if it&rsquo;s enabled. We can do that pretty simply with <code>curl</code> and <code>jq</code>:</p>
+<pre tabindex="0"><code>curl https://botsin.space/api/v2/instance | jq &#39;.configuration.urls.streaming&#39;
+</code></pre><p>This tells me that the websocket url for botsin.space is <code>wss://botsin.space</code>. Great!</p>
+<p>Let&rsquo;s take a peek at the Mastodon Streaming API docs<sup id="fnref:1"><a href="#fn:1" class="footnote-ref" role="doc-noteref">1</a></sup> as well. The API actually allows you to make simple HTTP requests if you prefer, but we&rsquo;ll be jumping down to the websocket section<sup id="fnref:2"><a href="#fn:2" class="footnote-ref" role="doc-noteref">2</a></sup>. It looks like if we want to subscribe to direct message events, we&rsquo;ll want a URL that looks something like: <code>wss://botsin.space/api/v1/streaming?stream=direct&amp;access_token=&lt;ACCESS_TOKEN&gt;</code>. There are a lot of different types though. You can see all of them on this same page, some of them are even public and don&rsquo;t require an access_token at all. For the <code>direct</code> type, we&rsquo;ll need that so let&rsquo;s make a new Application.</p>
+<h3 id="lets-get-an-access-token">Let&rsquo;s get an Access Token</h3>
+<ul>
+<li>Go to the settings on your instance</li>
+<li>Click &lsquo;Development&rsquo;, then &lsquo;New Application&rsquo;.</li>
+<li>Give this new application a name and (optionally) a link to a website.</li>
+<li>Refer to the <a href="https://docs.joinmastodon.org/methods/streaming/#direct">OAuth description for the event</a> to find out what scope you need.</li>
+<li>You&rsquo;ll need the value from &ldquo;Your access token&rdquo; to pass as the environment variable.</li>
+</ul>
+<h3 id="putting-it-all-together">Putting it all together</h3>
+<p>Now that we&rsquo;ve done our research and gotten an access token you can clone/fork/copy this repo<sup id="fnref:3"><a href="#fn:3" class="footnote-ref" role="doc-noteref">3</a></sup> to start playing with the websocket. If you just want to immediately start listening to direct messages you can run something like this:
+<code>STREAMING_DOMAIN=&quot;wss://botsin.space&quot; STREAM=direct ACCESS_TOKEN=&lt;YOUR_ACCESS_TOKEN&gt; cargo run</code></p>
+<h3 id="what-next">What next?</h3>
+<p>Well you could deploy it somewhere. I really like <a href="https://fly.io">https://fly.io</a>.</p>
+<p>This probably also isn&rsquo;t the most reliable solution. If you remove the <code>if msg.is_text()</code> check you should see heartbeat messages every once in a while. It&rsquo;d probably be a good idea to close the connection and re-establish it if you stop receiving those. In this case you might want to use an http request to catch any unread messages that you might have missed in the meantime.</p>
+<p><strong>References</strong></p>
+<div class="footnotes" role="doc-endnotes">
+<hr>
+<ol>
+<li id="fn:1">
+<p><a href="https://docs.joinmastodon.org/methods/streaming">https://docs.joinmastodon.org/methods/streaming</a>&#160;<a href="#fnref:1" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:2">
+<p><a href="https://docs.joinmastodon.org/methods/streaming/#websocket">https://docs.joinmastodon.org/methods/streaming/#websocket</a>&#160;<a href="#fnref:2" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+<li id="fn:3">
+<p><a href="https://github.com/PatOConnor43/mastodon-websocket-rust-example">https://github.com/PatOConnor43/mastodon-websocket-rust-example</a>&#160;<a href="#fnref:3" class="footnote-backref" role="doc-backlink">&#x21a9;&#xfe0e;</a></p>
+</li>
+</ol>
+</div>
+
+                    
+                    <HR width="100%" id="EOF">
+		    <p style="color:#777;">Last modified on 2023-09-09</p>
+                    
+                </div>
+            </div>
+            
+            
+            <nav class="post-pagination">
+
+                
+                <a class="newer-posts">
+			Next<br>No newer posts.
+                </a>
+                
+                
+                
+                <a class="older-posts" href="/automating-blog-posting-with-mastodon/">
+			Previous<br>Automating Blog Posting With Mastodon
+                </a>
+                
+            </nav>
+            <div class="post-comment-wrapper">
+                
+
+
+
+
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+    </div>
+
+
+                    </div>
+            </div><div id="sideContainer" class="side-container">
+    
+    <a class="a-block nav-head false" href="https://xn--z47haa.ws/">
+    
+        <div class="nav-title">
+            Pat Cave
+        </div>
+        
+        <div class="nav-subtitle">
+            😮‍💨
+        </div>
+        
+    </a>
+
+    <div class="nav-link-list">
+        
+        
+    </div>
+
+    
+
+    <div class="nav-footer">
+        <a rel="me" href="https://hachyderm.io/@patoconnor43">Find me on Mastodon</a>
+<br>
+
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://risehere.net/">Rise</a>
+<br>
+Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	2023 Pat Cave
+	
+
+    </div>
+    
+</div><div id="extraContainer" class="extra-container">
+    <div class="toc-wrapper">
+        
+
+        
+        <div class="toc">
+
+
+	<div class="toc-content">
+	
+		
+		
+		
+		<center>- CATALOG -</center>
+		
+		
+		<ul>
+			
+				
+				
+					
+						
+						
+						
+						
+							
+								
+									<ul>
+								
+							
+								
+									<ul>
+								
+							
+						
+						
+							<li>
+								<a href="#lets-start-with-some-research" class="nav-lets-start-with-some-research">
+									Let’s start with some research
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#lets-get-an-access-token" class="nav-lets-get-an-access-token">
+									Let’s get an Access Token
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#putting-it-all-together" class="nav-putting-it-all-together">
+									Putting it all together
+								</a>
+							</li>
+						
+						
+					
+				
+			
+				
+				
+					
+						
+						
+						
+						
+						
+							<li>
+								<a href="#what-next" class="nav-what-next">
+									What next?
+								</a>
+							</li>
+						
+						
+					
+				
+			
+		</ul>
+	</div>
+
+</div>
+        
+    </div>
+    <div class="pagination">
+        <a id="globalBackToTop" class="pagination-action animated-visibility" href="#top"
+            :class="{ invisible: scrollY == 0 }">
+            <i class="material-icons pagination-action-icon">
+                keyboard_arrow_up
+            </i>
+        </a>
+        
+        <a type="button" class="pagination-action" id="darkModeToggleButton">
+            <span class="material-icons pagination-action-icon" id="darkModeToggleIcon">
+                dark_mode
+            </span>
+        </a>
+        
+        
+    </div>
+</div><div id="single-column-footer"><a rel="me" href="https://hachyderm.io/@patoconnor43">Find me on Mastodon</a>
+<br>
+
+Hugo Theme <a href="https://github.com/amazingrise/hugo-theme-diary">Diary</a> by <a href="https://risehere.net/">Rise</a>
+<br>
+Ported from <a href="https://mak1t0.cc/" target="_blank" rel="noreferrer noopener">Makito</a>'s <a href="https://github.com/SumiMakito/hexo-theme-journal/" target="_blank" rel="noreferrer noopener">Journal.</a> <br>
+<br>
+
+&copy;
+	
+	2023 Pat Cave
+	
+</div>
+            </div>
+    
+    <script src="/js/journal.js"></script></body>
+</html>

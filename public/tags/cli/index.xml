@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>cli on Pat Cave</title>
+    <link>https://xn--z47haa.ws/tags/cli/</link>
+    <description>Recent content in cli on Pat Cave</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Fri, 23 Jun 2023 22:57:57 -0700</lastBuildDate><atom:link href="https://xn--z47haa.ws/tags/cli/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>A helpful little Snowman</title>
+      <link>https://xn--z47haa.ws/snowman-experience/</link>
+      <pubDate>Fri, 23 Jun 2023 22:57:57 -0700</pubDate>
+      
+      <guid>https://xn--z47haa.ws/snowman-experience/</guid>
+      <description>Snowman is a CLI application that I&amp;rsquo;ve been working on to make my life a little easier.
+https://github.com/PatOConnor43/snowman
+So What&amp;rsquo;s Snowman? During my day job, I work with a lot with APIs. Sometimes I&amp;rsquo;m writing and testing them, sometimes I&amp;rsquo;m using them to give feedback to other developers. The problem I had though was managing all those variables! I have at least one set of credentials for each environment I work in and I might even have multiple sets with different scopes in order to test different things.</description>
+    </item>
+    
+  </channel>
+</rss>

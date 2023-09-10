@@ -1,0 +1,274 @@
+<?xml-stylesheet href="/rss.xsl" type="text/xsl"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Pat Cave</title>
+    <link>https://xn--z47haa.ws/</link>
+    <description>Recent content on Pat Cave</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 09 Sep 2023 15:30:00 -0700</lastBuildDate>
+    
+        <atom:link href="https://xn--z47haa.ws/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    
+        <item>
+        <title>Using the Mastodon Streaming API</title>
+        <link>https://xn--z47haa.ws/using-the-mastodon-streaming-api/</link>
+        <pubDate>Sat, 09 Sep 2023 15:30:00 -0700</pubDate>
+        
+        <guid>https://xn--z47haa.ws/using-the-mastodon-streaming-api/</guid>
+        <description>Pat Cave https://xn--z47haa.ws/using-the-mastodon-streaming-api/  ::: rust API mastodon fediverse  :::&lt;p&gt;I&amp;rsquo;ve been thinking about trying to write a Mastodon bot that can do something &amp;ldquo;useful&amp;rdquo;. Unfortunately, I don&amp;rsquo;t know what that idea is right now 😅 but I do think it could involve direct messaging the bot. But that raises the question, &amp;ldquo;How would the bot know that it has an unread message&amp;rdquo;? Well, it could continuously poll the instance to get unread messages. This &lt;em&gt;feels&lt;/em&gt; pretty wasteful, especially since our bot probably won&amp;rsquo;t have very much traffic. It would be really nice if we could just get an event and then start doing some work. &lt;strong&gt;This is where the streaming API comes in.&lt;/strong&gt;&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;TL;DR you can find the code here &lt;a href=&#34;https://github.com/PatOConnor43/mastodon-websocket-rust-example/tree/master&#34;&gt;https://github.com/PatOConnor43/mastodon-websocket-rust-example/tree/master&lt;/a&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;h3 id=&#34;lets-start-with-some-research&#34;&gt;Let&amp;rsquo;s start with some research&lt;/h3&gt;
+&lt;p&gt;Unfortunately, the streaming API isn&amp;rsquo;t enabled on every instance. If you want to follow-along with your instance, you should start by checking if it&amp;rsquo;s enabled. We can do that pretty simply with &lt;code&gt;curl&lt;/code&gt; and &lt;code&gt;jq&lt;/code&gt;:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;curl https://botsin.space/api/v2/instance | jq &amp;#39;.configuration.urls.streaming&amp;#39;
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;This tells me that the websocket url for botsin.space is &lt;code&gt;wss://botsin.space&lt;/code&gt;. Great!&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s take a peek at the Mastodon Streaming API docs&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt; as well. The API actually allows you to make simple HTTP requests if you prefer, but we&amp;rsquo;ll be jumping down to the websocket section&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;. It looks like if we want to subscribe to direct message events, we&amp;rsquo;ll want a URL that looks something like: &lt;code&gt;wss://botsin.space/api/v1/streaming?stream=direct&amp;amp;access_token=&amp;lt;ACCESS_TOKEN&amp;gt;&lt;/code&gt;. There are a lot of different types though. You can see all of them on this same page, some of them are even public and don&amp;rsquo;t require an access_token at all. For the &lt;code&gt;direct&lt;/code&gt; type, we&amp;rsquo;ll need that so let&amp;rsquo;s make a new Application.&lt;/p&gt;
+&lt;h3 id=&#34;lets-get-an-access-token&#34;&gt;Let&amp;rsquo;s get an Access Token&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;Go to the settings on your instance&lt;/li&gt;
+&lt;li&gt;Click &amp;lsquo;Development&amp;rsquo;, then &amp;lsquo;New Application&amp;rsquo;.&lt;/li&gt;
+&lt;li&gt;Give this new application a name and (optionally) a link to a website.&lt;/li&gt;
+&lt;li&gt;Refer to the &lt;a href=&#34;https://docs.joinmastodon.org/methods/streaming/#direct&#34;&gt;OAuth description for the event&lt;/a&gt; to find out what scope you need.&lt;/li&gt;
+&lt;li&gt;You&amp;rsquo;ll need the value from &amp;ldquo;Your access token&amp;rdquo; to pass as the environment variable.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3 id=&#34;putting-it-all-together&#34;&gt;Putting it all together&lt;/h3&gt;
+&lt;p&gt;Now that we&amp;rsquo;ve done our research and gotten an access token you can clone/fork/copy this repo&lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt; to start playing with the websocket. If you just want to immediately start listening to direct messages you can run something like this:
+&lt;code&gt;STREAMING_DOMAIN=&amp;quot;wss://botsin.space&amp;quot; STREAM=direct ACCESS_TOKEN=&amp;lt;YOUR_ACCESS_TOKEN&amp;gt; cargo run&lt;/code&gt;&lt;/p&gt;
+&lt;h3 id=&#34;what-next&#34;&gt;What next?&lt;/h3&gt;
+&lt;p&gt;Well you could deploy it somewhere. I really like &lt;a href=&#34;https://fly.io&#34;&gt;https://fly.io&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;This probably also isn&amp;rsquo;t the most reliable solution. If you remove the &lt;code&gt;if msg.is_text()&lt;/code&gt; check you should see heartbeat messages every once in a while. It&amp;rsquo;d probably be a good idea to close the connection and re-establish it if you stop receiving those. In this case you might want to use an http request to catch any unread messages that you might have missed in the meantime.&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;References&lt;/strong&gt;&lt;/p&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.joinmastodon.org/methods/streaming&#34;&gt;https://docs.joinmastodon.org/methods/streaming&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.joinmastodon.org/methods/streaming/#websocket&#34;&gt;https://docs.joinmastodon.org/methods/streaming/#websocket&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/PatOConnor43/mastodon-websocket-rust-example&#34;&gt;https://github.com/PatOConnor43/mastodon-websocket-rust-example&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+- https://xn--z47haa.ws/using-the-mastodon-streaming-api/ - </description>
+        </item>
+    
+    
+    
+        <item>
+        <title>Automating Blog Posting With Mastodon</title>
+        <link>https://xn--z47haa.ws/automating-blog-posting-with-mastodon/</link>
+        <pubDate>Sat, 29 Jul 2023 20:00:00 -0700</pubDate>
+        
+        <guid>https://xn--z47haa.ws/automating-blog-posting-with-mastodon/</guid>
+        <description>Pat Cave https://xn--z47haa.ws/automating-blog-posting-with-mastodon/ :::&lt;p&gt;I&amp;rsquo;ve recently been being a little more active on Mastodon and I&amp;rsquo;ve also taken a new interest in getting this blog off the ground.
+(Last weekend I finally got the DNS issue fixed up so you can use my actual domain https://🆒🆒🆒.ws).&lt;/p&gt;
+&lt;p&gt;Anyway, this Saturday morning I thought, &amp;ldquo;Why don&amp;rsquo;t I automate it?&amp;rdquo; I already have the deploy automated with Github Actions. Why not save my self 3 seconds posting it to Mastodon by spending a couple hours learning how the Mastodon API works? 😅&lt;/p&gt;
+&lt;h2 id=&#34;so-whats-the-plan&#34;&gt;So what&amp;rsquo;s the plan?&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;Look at the Mastodon docs to see how the API works&lt;/li&gt;
+&lt;li&gt;Write a script that posts a new status for the recently published blog post&lt;/li&gt;
+&lt;li&gt;Run that in a scheduled Github Action&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Easy right?&lt;/p&gt;
+&lt;h2 id=&#34;lets-look-at-the-docs&#34;&gt;Let&amp;rsquo;s look at the docs&lt;/h2&gt;
+&lt;p&gt;Here&amp;rsquo;s the documentation for creating a new status&lt;sup id=&#34;fnref:1&#34;&gt;&lt;a href=&#34;#fn:1&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;1&lt;/a&gt;&lt;/sup&gt;. That was easy, but how about authentication? That always seems to take me the longest. This is the page I initially found&lt;sup id=&#34;fnref:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt; (&amp;lt;&amp;ndash; Not as helpful). This talks about creating an application, authentication code flow(?), grant types(?).&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s try to break it down and I&amp;rsquo;ll try to explain why this wasn&amp;rsquo;t as helpful as I wanted it to be.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s start by making our new application. On my instance this url is:
+&lt;a href=&#34;https://hachyderm.io/settings/applications&#34;&gt;https://hachyderm.io/settings/applications&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;You should be able to go to the same path on your instance. After clicking &amp;ldquo;New Application&amp;rdquo;, you should be greeted by a page like this:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/118fe6ad-e2d6-40e9-8eaa-bf6e38c5b98d&#34; alt=&#34;A screenshot of the New Application page. There are fields for name, website, redirect URI, and scopes&#34;&gt;&lt;/p&gt;
+&lt;p&gt;In my case, I called this Application &amp;ldquo;Mastodon Poster&amp;rdquo; without any change to the website or redirect URI. Since I only want this Application to post statuses I also only gave it the &lt;code&gt;write:statuses&lt;/code&gt; scope.&lt;/p&gt;
+&lt;p&gt;Now that we have an Application, let&amp;rsquo;s try to figure out what&amp;rsquo;s going on with authentication. Based off the token spec&lt;sup id=&#34;fnref:3&#34;&gt;&lt;a href=&#34;#fn:3&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;3&lt;/a&gt;&lt;/sup&gt;, it looks like there are 3 ways to authenticate with the Mastodon API:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Authorization Code flow&lt;/li&gt;
+&lt;li&gt;Password grant flow&lt;/li&gt;
+&lt;li&gt;Client credentials grant&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Based on previous API experience, I don&amp;rsquo;t think I really want Authorization Code Flow. That&amp;rsquo;s typically used as a way to allow a user to log in using a browser and then take a code and act on behalf of the user. We want this to be totally headless.&lt;/p&gt;
+&lt;p&gt;Password grant flow sounds gross. I really don&amp;rsquo;t want to use my actual password to authenticate.&lt;/p&gt;
+&lt;p&gt;Client credentials &lt;em&gt;might&lt;/em&gt; work. What happens if we try that? Well we&amp;rsquo;d make a request like this&lt;sup id=&#34;fnref1:2&#34;&gt;&lt;a href=&#34;#fn:2&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;2&lt;/a&gt;&lt;/sup&gt;:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;curl -X POST &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;	-F &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;client_id=your_client_id_here&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;	-F &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;client_secret=your_client_secret_here&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;	-F &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;redirect_uri=urn:ietf:wg:oauth:2.0:oob&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;	-F &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;grant_type=client_credentials&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;	https://mastodon.example/oauth/token
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Okay that looks like it worked. You should have a response that looks like:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;{&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;access_token&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ZA-Yj3aBD8U8Cm7lKUp-lm9O9BmDgdhHzDeqsY8tlL0&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;token_type&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Bearer&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;scope&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;read&amp;#34;&lt;/span&gt;,
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;created_at&amp;#34;&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;1573979017&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Let&amp;rsquo;s try to use that access_token to make a status:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    curl -X POST -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Authorization: Bearer &lt;/span&gt;$access_token&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$MASTODON_DOMAIN&lt;span style=&#34;color:#e6db74&#34;&gt;/api/v1/statuses&amp;#34;&lt;/span&gt; -d &lt;span style=&#34;color:#e6db74&#34;&gt;$&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    {
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;        &amp;#34;status&amp;#34;: &amp;#34;test&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;    }
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;{&amp;ldquo;error&amp;rdquo;:&amp;ldquo;This method requires an authenticated user&amp;rdquo;}&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;😮‍💨&lt;/p&gt;
+&lt;p&gt;What?&lt;/p&gt;
+&lt;p&gt;Okay, so turns out we can&amp;rsquo;t use client_credentials either because that grant_type isn&amp;rsquo;t meant to act on behalf of a user. It&amp;rsquo;s more for making general queries against your instance. So I spent an hour or so looking for other options, because I &lt;em&gt;really&lt;/em&gt; didn&amp;rsquo;t want to use my password. Then I finally found this GitHub issue&lt;sup id=&#34;fnref:4&#34;&gt;&lt;a href=&#34;#fn:4&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;4&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;If you want to, you can also log in manually and create a new application via Settings &amp;gt; Development, then copy-paste the generated access token into your config file or environment variables or whatever.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Oh? We haven&amp;rsquo;t talked about this yet, but when you made an application there should be 3 IDs there. A client ID, a client secret, and an Access Token.
+&lt;img src=&#34;https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/a54417e8-3abc-48dc-8fec-f569889cfc1a&#34; alt=&#34;A screenshot with an arrow pointing at the value for the &amp;ldquo;Your access token&amp;rdquo; field&#34;&gt;&lt;/p&gt;
+&lt;p&gt;We haven&amp;rsquo;t tried anything with the Access Token. So it sounds like this person says we can do something like this?&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    curl -X POST -H &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Authorization: Bearer &lt;/span&gt;$access_token&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;$MASTODON_DOMAIN&lt;span style=&#34;color:#e6db74&#34;&gt;/api/v1/statuses&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;        -F &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;status=Test
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Oh hey! That worked!&lt;/p&gt;
+&lt;p&gt;Alright let&amp;rsquo;s wrap this up in a script we can call in GitHub Actions. You can find the most recent version of that in my blog repo here&lt;sup id=&#34;fnref:5&#34;&gt;&lt;a href=&#34;#fn:5&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;5&lt;/a&gt;&lt;/sup&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;time-for-some-action-&#34;&gt;Time for some Action 😎&lt;/h2&gt;
+&lt;p&gt;A key consideration for this whole thing was that I wanted it to be mostly stateless. I don&amp;rsquo;t want to have to worry about double posting a blog post if I fix a small typo on master. So the current plan is:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Allow current github-pages deployment to happen as normal&lt;/li&gt;
+&lt;li&gt;Create a separate scheduled workflow that runs once per day&lt;/li&gt;
+&lt;li&gt;In this workflow make a request to my rss feed to see if something was published in the last day&lt;/li&gt;
+&lt;li&gt;If it was, post a status on Mastodon&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;I think there&amp;rsquo;s plenty of other ways to do it but that&amp;rsquo;s what I&amp;rsquo;m going with for now.&lt;/p&gt;
+&lt;p&gt;Let&amp;rsquo;s get started on that workflow. Here&amp;rsquo;s the cron syntax for running this at 9 AM every day&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Publish Mastodon status if new blog is available&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;on&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;schedule&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    - &lt;span style=&#34;color:#f92672&#34;&gt;cron&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;0 9 * * *&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;blockquote&gt;
+&lt;p&gt;I didn&amp;rsquo;t realize this was GMT, but we can change that later.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;Based off the script we need a couple dependencies:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;jq&lt;/code&gt; to parse json&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;hq&lt;/code&gt; to parse html (the rss feed is xml)&lt;/li&gt;
+&lt;li&gt;checkout the branch so we can run the script&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Let&amp;rsquo;s drop the checkout action in here because that&amp;rsquo;s easy:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;publish&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;environment&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mastodon-poster&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;runs-on&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;ubuntu-latest&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;steps&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Checkout&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;uses&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;actions/checkout@v3&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Next, let&amp;rsquo;s install &lt;code&gt;jq&lt;/code&gt;. It turns out there&amp;rsquo;s an existing action for this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Install jq&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;uses&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;dcarbone/install-jq-action@v1.0.1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;This has some additional options if you want to specify a specific version. I don&amp;rsquo;t care about that in this case though.&lt;/p&gt;
+&lt;p&gt;Lastly, we need to get &lt;code&gt;hq&lt;/code&gt; installed. You can find that project here&lt;sup id=&#34;fnref:6&#34;&gt;&lt;a href=&#34;#fn:6&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;6&lt;/a&gt;&lt;/sup&gt;. I didn&amp;rsquo;t &lt;em&gt;see&lt;/em&gt; a predefined action for this so let&amp;rsquo;s just try getting this installed ourselves. Here&amp;rsquo;s what I came up with:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Install hq&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;run&lt;/span&gt;: |&lt;span style=&#34;color:#e6db74&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          _version=&amp;#39;1.0.1&amp;#39;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          # Probably this is the right arch right?
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          _dl_url=&amp;#34;https://github.com/orf/hq/releases/download/v$_version/hq-Linux-x86_64.tar.gz&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          _dl_path=&amp;#34;$RUNNER_TEMP/hq.tar.gz&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          wget -O- &amp;#34;$_dl_url&amp;#34; &amp;gt; &amp;#34;$_dl_path&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          tar -xzf &amp;#34;$_dl_path&amp;#34; --directory $RUNNER_TEMP
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          _executable_path=&amp;#34;$RUNNER_TEMP/hq&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          echo &amp;#34;Creating tool cache directory $RUNNER_TOOL_CACHE/hq&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          mkdir -p &amp;#34;$RUNNER_TOOL_CACHE/hq&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          echo &amp;#34;Installing into tool cache:&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          echo &amp;#34;Src: $_executable_path&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          echo &amp;#34;Dst: $RUNNER_TOOL_CACHE/hq/hq&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          mv &amp;#34;$_executable_path&amp;#34; &amp;#34;$RUNNER_TOOL_CACHE/hq/hq&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          chmod +x &amp;#34;$RUNNER_TOOL_CACHE/hq/hq&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          echo &amp;#34;Adding $RUNNER_TOOL_CACHE/hq to path...&amp;#34;
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;          echo &amp;#34;$RUNNER_TOOL_CACHE/hq&amp;#34; &amp;gt;&amp;gt; $GITHUB_PATH&lt;/span&gt;          
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Nice, hopefully that should pull the right architecture for the runner and then add it on the path. Another option would probably be to use an existing Rust image and then use &lt;code&gt;cargo install html-query&lt;/code&gt;.&lt;/p&gt;
+&lt;p&gt;Lastly, let&amp;rsquo;s run our publish script:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;Run publish script&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;env&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;MASTODON_ACCESS_TOKEN&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;${{ secrets.MASTODON_ACCESS_TOKEN }}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;MASTODON_DOMAIN&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;https://hachyderm.io&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;run&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;bash ./scripts/publish.sh&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#ae81ff&#34;&gt;./scripts/publish.sh&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Notice &lt;code&gt;MASTODON_ACCESS_TOKEN&lt;/code&gt; variable coming from &lt;code&gt;secrets.MASTODON_ACCESS_TOKEN&lt;/code&gt;. You&amp;rsquo;ll need to set this up as a secret in GitHub. You can do that by going to Settings &amp;gt; Environment &amp;gt; New Environment and then finding this tab and adding the new secret:
+&lt;img src=&#34;https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/8048a82c-ec5e-44b2-b8cd-88b9eefbfd2a&#34; alt=&#34;A Screenshot showing a panel with the MASTODON_ACCESS_TOKEN added as a secret&#34;&gt;&lt;/p&gt;
+&lt;p&gt;Remember to assign this environment when you&amp;rsquo;re defining your job:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;jobs&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;publish&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;environment&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;mastodon-poster&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Here&amp;rsquo;s a link to the current version of the workflow&lt;sup id=&#34;fnref:7&#34;&gt;&lt;a href=&#34;#fn:7&#34; class=&#34;footnote-ref&#34; role=&#34;doc-noteref&#34;&gt;7&lt;/a&gt;&lt;/sup&gt;&lt;/p&gt;
+&lt;h2 id=&#34;wrapping-up&#34;&gt;Wrapping up&lt;/h2&gt;
+&lt;p&gt;At the time of writing this post I haven&amp;rsquo;t actually run this GitHub Action yet 😅 I set it up to run on a schedule and I thought it&amp;rsquo;d be fun if I did it right on the first try 😬 Maybe I&amp;rsquo;ll put a small update if it worked out.&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;Edit: It didn&amp;rsquo;t work first try, but it did work second try after I fixed the date command flags I was using. Turns out they&amp;rsquo;re different between Mac and Linux.&lt;/em&gt;&lt;/p&gt;
+&lt;h2 id=&#34;references&#34;&gt;References&lt;/h2&gt;
+&lt;div class=&#34;footnotes&#34; role=&#34;doc-endnotes&#34;&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li id=&#34;fn:1&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.joinmastodon.org/methods/statuses/#create&#34;&gt;https://docs.joinmastodon.org/methods/statuses/#create&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:1&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:2&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.joinmastodon.org/client/token/&#34;&gt;https://docs.joinmastodon.org/client/token/&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref1:2&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:3&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://docs.joinmastodon.org/spec/oauth/#token&#34;&gt;https://docs.joinmastodon.org/spec/oauth/#token&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:3&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:4&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/mastodon/documentation/issues/1014&#34;&gt;https://github.com/mastodon/documentation/issues/1014&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:4&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:5&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/PatOConnor43/PatOConnor43.github.io/blob/master/scripts/publish.sh&#34;&gt;https://github.com/PatOConnor43/PatOConnor43.github.io/blob/master/scripts/publish.sh&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:5&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:6&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/orf/hq&#34;&gt;https://github.com/orf/hq&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:6&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li id=&#34;fn:7&#34;&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/PatOConnor43/PatOConnor43.github.io/blob/master/.github/workflows/mastodon_publish.yaml&#34;&gt;https://github.com/PatOConnor43/PatOConnor43.github.io/blob/master/.github/workflows/mastodon_publish.yaml&lt;/a&gt;&amp;#160;&lt;a href=&#34;#fnref:7&#34; class=&#34;footnote-backref&#34; role=&#34;doc-backlink&#34;&gt;&amp;#x21a9;&amp;#xfe0e;&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/div&gt;
+- https://xn--z47haa.ws/automating-blog-posting-with-mastodon/ - </description>
+        </item>
+    
+    
+    
+        <item>
+        <title>A helpful little Snowman</title>
+        <link>https://xn--z47haa.ws/snowman-experience/</link>
+        <pubDate>Fri, 23 Jun 2023 22:57:57 -0700</pubDate>
+        
+        <guid>https://xn--z47haa.ws/snowman-experience/</guid>
+        <description>Pat Cave https://xn--z47haa.ws/snowman-experience/  ::: cli rust  :::&lt;p&gt;Snowman is a CLI application that I&amp;rsquo;ve been working on to make my life a little easier.&lt;/p&gt;
+&lt;p&gt;&lt;a href=&#34;https://github.com/PatOConnor43/snowman&#34;&gt;https://github.com/PatOConnor43/snowman&lt;/a&gt;&lt;/p&gt;
+&lt;h3 id=&#34;so-whats-snowman&#34;&gt;So What&amp;rsquo;s Snowman?&lt;/h3&gt;
+&lt;p&gt;During my day job, I work with a lot with APIs. Sometimes I&amp;rsquo;m writing and testing them, sometimes I&amp;rsquo;m using them to give feedback to other developers. The problem I had though was managing all those variables! I have at least one set of credentials for each environment I work in and I might even have multiple sets with different scopes in order to test different things. You might say to yourself:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;This is a solved problem. Can&amp;rsquo;t you just use something like environments in Postman?&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;You&amp;rsquo;re right!&lt;/p&gt;
+&lt;p&gt;I like Postman, I really do. &lt;em&gt;But&lt;/em&gt; I also really like the terminal. Writing up a little bash script so I can continuously iterate on and examine the output of a request is how I like to work. So, we&amp;rsquo;re at a bit of a crossroads. Do I use Postman because my team and I can centralize variables and knowledge, &lt;em&gt;OR&lt;/em&gt; do I continue to use curl without taking advantage of consistent environment variables?&lt;/p&gt;
+&lt;p&gt;TRICK QUESTION! LET&amp;rsquo;S DO BOTH!&lt;/p&gt;
+&lt;p&gt;Snowman allows me to retrieve all the environments that I have access to, pick one, and then set them as environment variables in my terminal. This allows me to use them in standard scripts that I keep on my machine. Let&amp;rsquo;s look at some examples.&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/44a5fdf8-db35-441d-ba97-1f46e0a9469a&#34; alt=&#34;Screenshot showing a fuzzy matcher with the input &amp;ldquo;Worksp&amp;rdquo;. The available results are, &amp;ldquo;My Workspace&amp;rdquo; and &amp;ldquo;Aaron&amp;rsquo;s Workspace&amp;rdquo;.&#34;&gt;&lt;/p&gt;
+&lt;p&gt;After configuring Snowman for the first time, you can use &lt;code&gt;snowman activate&lt;/code&gt; to see a list of Workspaces you have access to. This selector does fuzzy matching so you can get to what you need quickly. Selecting a Workspace will show you the list of environments:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/8e9123c1-cc6a-4e3d-90c5-385f3dafbb05&#34; alt=&#34;Screenshot showing a lit of 11 environments&#34;&gt;&lt;/p&gt;
+&lt;p&gt;As you can see, there&amp;rsquo;s a lot of them. (And maybe I should come up with some slightly more standard naming 😅.) The actual name of the environment is what the selection starts with. The name enclosed in brackets represents the fork it came from. This allows me to keep in sync with any changes to those generic environments, while personalizing them as I want. Next, once I select one, the name of the environment will be populated on my prompt:&lt;/p&gt;
+&lt;p&gt;&lt;img src=&#34;https://github.com/PatOConnor43/PatOConnor43.github.io/assets/6657525/b119237d-4152-4cb2-bfa4-081fabc13bfc&#34; alt=&#34;Screenshot showing zsh prompt that includes &amp;ldquo;⛄ Prod Workiva Testing [prod]&amp;rdquo;&#34;&gt;&lt;/p&gt;
+&lt;p&gt;That&amp;rsquo;s accomplished by a custom &lt;a href=&#34;https://github.com/PatOConnor43/snowman/tree/master/zsh&#34;&gt;spaceship prompt plugin&lt;/a&gt; I wrote.&lt;/p&gt;
+&lt;p&gt;Now that I have these standard environment variables set I can use them in scripts to automate fetching a JWT, making requests, waiting for an async job to finish, etc. Then when I&amp;rsquo;m finished with this environment I can close the shell with Ctrl-D and be back in the parent shell.&lt;/p&gt;
+&lt;h3 id=&#34;wrapping-up&#34;&gt;Wrapping up&lt;/h3&gt;
+&lt;p&gt;At this time Snowman is still alpha and I reserve the right to make breaking changes. If you think you can use this too, maybe we can talk about what changes would be necessary for an actual stable release. Thanks for reading!&lt;/p&gt;
+- https://xn--z47haa.ws/snowman-experience/ - </description>
+        </item>
+    
+    
+  </channel>
+</rss> 
